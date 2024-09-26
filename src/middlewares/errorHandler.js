@@ -4,10 +4,29 @@ export const notFoundError = (req, res, next) => {
   next(error);
 };
 export const errorHandler = (error, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode);
-  res.json({
+  let statusCode = error.statusCode || 500; // Internal server error
+  // Handle Mongoose CastError for ObjectId
+  if (error.name === "CastError" && error.kind === "ObjectId" && error.path) {
+    statusCode = 400; // Bad request for invalid ObjectId
+    error.message = `Invalid ${error.path}: ${error.value}`;
+  }
+
+  // Handle Mongoose ValidationError
+  if (error.name === "ValidationError") {
+    statusCode = 400; // Bad request for validation errors
+    const errors = Object.values(error.errors).map((value) => value.message);
+    error.message = `Validation errors: ${errors.join(", ")}`;
+  }
+
+  // Handle Mongoose duplicate key error
+  if (error.code === 11000) {
+    statusCode = 400; // Bad request for duplicate key error
+    error.message = `Duplicate field value entered`;
+  }
+
+  res.status(statusCode).json({
     status: false,
+    statusCode: statusCode,
     message: error.message,
     data: null,
     stack: process.env.NODE_ENV === "production" ? "🥞" : error.stack,
@@ -23,12 +42,3 @@ export class appError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
-
-// export class ApiResponse {
-//   constructor(statusCode, data, message = "Success") {
-//     this.statusCode = statusCode;
-//     this.data = data;
-//     this.message = message;
-//     this.success = statusCode < 400;
-//   }
-// }

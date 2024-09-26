@@ -4,7 +4,11 @@
 import expressAsyncHandler from "express-async-handler";
 import { appError } from "../middlewares/errorHandler.js";
 import { User } from "../models/userModel.js";
-import { generateToken } from "../utils/JwtHelper.js";
+import {
+  accessAndRefreshToken,
+  accessTokenOption,
+  refreshTokenOption,
+} from "../utils/JwtHelper.js";
 import {
   loginUserValidation,
   registerUserValidation,
@@ -34,16 +38,17 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
 //@access Public
 export const loginUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = loginUserValidation.parse(req.body);
-  // Check if the user exists
   const user = await User.findOne({ email });
   if (!user) {
     throw new appError("Invalid credentials", 400);
   }
-  // Check if the password is correct
   const isMatch = await user.matchPassword(password);
   if (!isMatch) {
     throw new appError("Invalid credentials", 400);
   }
+  const { accessToken, refreshToken } = await accessAndRefreshToken(user._id);
+  res.cookie("refreshToken", refreshToken, refreshTokenOption);
+  res.cookie("accessToken", accessToken, accessTokenOption);
   return res.status(200).json({
     success: true,
     message: "User logged in successfully",
@@ -51,7 +56,41 @@ export const loginUser = expressAsyncHandler(async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      role: user.role,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     },
+  });
+});
+
+//@desc get user profile
+//@route POST /api/v1/users/profile
+//@access Private
+export const userProfile = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+  return res.status(200).json({
+    success: true,
+    message: "User profile fetched successfully",
+    data: user,
+  });
+});
+
+//@desc get all users profile
+//@route POST /api/v1/users/allprofiles
+//@access Private Admin
+export const allUserProfiles = expressAsyncHandler(async (req, res) => {
+  const users = await User.find().select("-password -refreshToken");
+  if (!users) {
+    throw new appError("No users found", 404);
+  }
+  return res.status(200).json({
+    success: true,
+    message: "All users profile fetched successfully",
+    data: users,
   });
 });

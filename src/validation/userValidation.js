@@ -24,3 +24,8 @@ export const loginUserValidation = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
   password: z.string().trim(),
 });
+
+//user profile get validation
+export const userProfileValidation = z.object({
+  userId: z.string().trim(),
+});
