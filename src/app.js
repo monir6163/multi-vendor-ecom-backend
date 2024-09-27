@@ -23,8 +23,10 @@ app.use(morgan("dev"));
 
 //route imports
 import userRoutes from "./routes/userRoutes.js";
+import vendorRoutes from "./routes/vendorRoutes.js";
 
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/vendors", vendorRoutes);
 
 //default route
 app.get("/", (req, res) => {

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const orderItemSchema = new mongoose.Schema(
   {
-    productId: {
+    product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
       required: true,
@@ -58,12 +58,12 @@ const retunSchema = new mongoose.Schema(
 );
 const orderSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    vendorId: {
+    vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vendor",
       required: true,

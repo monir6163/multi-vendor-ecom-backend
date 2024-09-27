@@ -94,3 +94,26 @@ export const allUserProfiles = expressAsyncHandler(async (req, res) => {
     data: users,
   });
 });
+
+//@desc update user profile
+//@route PUT /api/v1/users/profile
+//@access Private
+export const updateUserProfile = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
+  if (!user) {
+    throw new appError("User not found", 404);
+  }
+  const { name, email, phone, address } = req.body;
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.phone = phone || user.phone;
+  user.address = address || user.address;
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    message: "User profile updated successfully",
+    data: user,
+  });
+});

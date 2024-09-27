@@ -27,17 +27,17 @@ const variationSchema = new mongoose.Schema({
 });
 const productSchema = new mongoose.Schema(
   {
-    vendorId: {
+    vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vendor",
       required: true,
     },
-    categoryId: {
+    category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    brandId: {
+    brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
       required: true,
@@ -51,9 +51,7 @@ const productSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
-      index: true,
       trim: true,
     },
     price: {
