@@ -8,12 +8,12 @@ import {
 } from "../controllers/vendorController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
-const router = Router();
+const vendorRouter = Router();
 
-router.route("/create").post(protect, createVendor);
-router.route("/all").get(getVendors);
-router.route("/single/:slug").get(getVendor);
-router.route("/update/:id").put(protect, updateVendor);
-router.route("/delete/:id").delete(protect, deleteVendor);
+vendorRouter.post("/create", protect, createVendor);
+vendorRouter.get("/all", getVendors);
+vendorRouter.get("/single/:slug", getVendor);
+vendorRouter.put("/update/:id", protect, updateVendor);
+vendorRouter.delete("/delete/:id", protect, deleteVendor);
 
-export default router;
+export default vendorRouter;

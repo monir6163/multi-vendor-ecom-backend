@@ -22,14 +22,18 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 //route imports
-import userRoutes from "./routes/userRoutes.js";
-import vendorRoutes from "./routes/vendorRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
+import productRouter from "./routes/productRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import vendorRouter from "./routes/vendorRoutes.js";
 
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/vendors", vendorRoutes);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/vendors", vendorRouter);
+app.use("/api/v1/products", productRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 //default route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Hello World");
 });
 

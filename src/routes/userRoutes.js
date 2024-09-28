@@ -8,12 +8,12 @@ import {
 } from "../controllers/userController.js";
 import { authorize, protect } from "../middlewares/authMiddleware.js";
 
-const router = Router();
+const userRouter = Router();
 
-router.route("/register").post(registerUser);
-router.route("/login").post(loginUser);
-router.route("/profile").get(protect, userProfile);
-router.route("/update/profile").put(protect, updateUserProfile);
-router.route("/all/profile").get(protect, authorize("admin"), allUserProfiles);
+userRouter.post("/register", registerUser);
+userRouter.post("/login", loginUser);
+userRouter.get("/profile", protect, userProfile);
+userRouter.put("/update/profile", protect, updateUserProfile);
+userRouter.get("/all/profile", protect, authorize("admin"), allUserProfiles);
 
-export default router;
+export default userRouter;

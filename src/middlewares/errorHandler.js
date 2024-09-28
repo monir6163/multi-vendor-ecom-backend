@@ -3,7 +3,7 @@ export const notFoundError = (req, res, next) => {
   res.status(404);
   next(error);
 };
-export const errorHandler = (error, req, res, next) => {
+export const errorHandler = (error, _req, res, _next) => {
   let statusCode = error.statusCode || 500; // Internal server error
   // Handle Mongoose CastError for ObjectId
   if (error.name === "CastError" && error.kind === "ObjectId" && error.path) {
